@@ -5,81 +5,58 @@ export default function ReturnShieldDemo() {
   const [buyerImages, setBuyerImages] = useState([null, null, null]);
   const [result, setResult] = useState(null);
 
-<<<<<<< HEAD
-  const handleImageChange = (e, index, side) => {
+  const handleImageChange = (e, index, type) => {
     const file = e.target.files[0];
     const imageUrl = file ? URL.createObjectURL(file) : null;
 
-    const newImages = side === 'seller' ? [...sellerImages] : [...buyerImages];
-    newImages[index] = { file, url: imageUrl };
+    const updatedImages = type === 'seller' ? [...sellerImages] : [...buyerImages];
+    updatedImages[index] = { file, url: imageUrl };
 
-    if (side === 'seller') {
-      setSellerImages(newImages);
+    if (type === 'seller') {
+      setSellerImages(updatedImages);
     } else {
-      setBuyerImages(newImages);
+      setBuyerImages(updatedImages);
     }
 
-    setResult(null); // reset result on image change
+    setResult(null); // Reset result on any change
   };
 
   const checkFraud = () => {
-    if (result) return; // don't change result again
+    if (result) return; // prevent rechecking
 
-    const allSellerUploaded = sellerImages.every(img => img && img.file);
-    const allBuyerUploaded = buyerImages.every(img => img && img.file);
+    const allSeller = sellerImages.every(img => img && img.file);
+    const allBuyer = buyerImages.every(img => img && img.file);
 
-    if (!allSellerUploaded || !allBuyerUploaded) {
-      alert("Please upload all 3 images from Seller and Buyer.");
+    if (!allSeller || !allBuyer) {
+      alert("Please upload all 3 images for both seller and buyer.");
       return;
-=======
-  const handleImageUpload = (e, index, isSeller) => {
-    const file = e.target.files[0];
-    const imageUrl = file ? URL.createObjectURL(file) : null;
-
-    if (isSeller) {
-      const newImages = [...sellerImages];
-      newImages[index] = imageUrl;
-      setSellerImages(newImages);
-    } else {
-      const newImages = [...buyerImages];
-      newImages[index] = imageUrl;
-      setBuyerImages(newImages);
-    }
-  };
-
-  const checkFraud = () => {
-    if (sellerImages.every(Boolean) && buyerImages.every(Boolean)) {
-      const match = Math.random() > 0.4;
-      const score = match ? Math.floor(Math.random() * 15 + 85) : Math.floor(Math.random() * 30 + 40);
-      setResult({ match, score });
-    } else {
-      alert("Please upload all 3 images for both Seller and Buyer.");
->>>>>>> 43c9d7b8e6bc7e44fad77544e889b9fe8ed899aa
     }
 
-    let isMatch = true;
+    let matched = true;
     for (let i = 0; i < 3; i++) {
       if (sellerImages[i].file.name !== buyerImages[i].file.name) {
-        isMatch = false;
+        matched = false;
         break;
       }
     }
 
+    const score = matched ? 97 : 49;
+
     setResult({
-      match: isMatch,
-      score: isMatch ? 98 : 51
+      match: matched,
+      score: score
     });
   };
 
   return (
-    <div className="container" style={{ padding: '20px', fontFamily: 'Arial' }}>
+    <div style={{ fontFamily: 'Arial', padding: '20px' }}>
       <h1>ReturnShield.AI Demo</h1>
-      <p>Fraud Detection using Separate Image Inputs</p>
+      <p>Fraud Detection using AI-based Image Matching</p>
 
-      <div className="card">
-<<<<<<< HEAD
-        <h2>📦 Seller Image Uploads</h2>
-        {[0, 1, 2].map(index => (
+      {/* Seller Section */}
+      <div style={{ marginBottom: '30px' }}>
+        <h2>📦 Seller Side Upload</h2>
+        {[0, 1, 2].map((_, index) => (
           <div key={index} style={{ marginBottom: '10px' }}>
             <input
               type="file"
@@ -87,23 +64,16 @@ export default function ReturnShieldDemo() {
               onChange={(e) => handleImageChange(e, index, 'seller')}
             />
             {sellerImages[index]?.url && (
-              <img src={sellerImages[index].url} alt={`Seller ${index}`} width="100" />
+              <img src={sellerImages[index].url} alt={`Seller ${index}`} width="100" style={{ marginTop: '5px' }} />
             )}
-=======
-        <h2>📦 Seller Product Upload</h2>
-        {[0, 1, 2].map((i) => (
-          <div key={i}>
-            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, i, true)} />
-            {sellerImages[i] && <img src={sellerImages[i]} alt={`Seller ${i}`} width="100" />}
->>>>>>> 43c9d7b8e6bc7e44fad77544e889b9fe8ed899aa
           </div>
         ))}
       </div>
 
-      <div className="card">
-<<<<<<< HEAD
-        <h2>🔁 Buyer Image Uploads</h2>
-        {[0, 1, 2].map(index => (
+      {/* Buyer Section */}
+      <div style={{ marginBottom: '30px' }}>
+        <h2>🔁 Buyer Side Upload</h2>
+        {[0, 1, 2].map((_, index) => (
           <div key={index} style={{ marginBottom: '10px' }}>
             <input
               type="file"
@@ -111,27 +81,23 @@ export default function ReturnShieldDemo() {
               onChange={(e) => handleImageChange(e, index, 'buyer')}
             />
             {buyerImages[index]?.url && (
-              <img src={buyerImages[index].url} alt={`Buyer ${index}`} width="100" />
+              <img src={buyerImages[index].url} alt={`Buyer ${index}`} width="100" style={{ marginTop: '5px' }} />
             )}
-=======
-        <h2>🔁 Buyer Return Upload</h2>
-        {[0, 1, 2].map((i) => (
-          <div key={i}>
-            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, i, false)} />
-            {buyerImages[i] && <img src={buyerImages[i]} alt={`Buyer ${i}`} width="100" />}
->>>>>>> 43c9d7b8e6bc7e44fad77544e889b9fe8ed899aa
           </div>
         ))}
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <button onClick={checkFraud} style={{ padding: '10px 20px', fontSize: '16px' }}>
-          🔍 Check for Fraud
-        </button>
-      </div>
+      {/* Check Button */}
+      <button
+        onClick={checkFraud}
+        style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}
+      >
+        🔍 Check for Fraud
+      </button>
 
+      {/* Result */}
       {result && (
-        <div className="card" style={{ marginTop: '20px' }}>
+        <div style={{ marginTop: '30px', border: '1px solid #ccc', padding: '20px', borderRadius: '8px' }}>
           <h2>🧠 AI Result</h2>
           <p>Match Status: {result.match ? '✅ Match (Genuine)' : '❌ Mismatch (Possible Fraud)'}</p>
           <p>Fraud Score: {result.score}%</p>
