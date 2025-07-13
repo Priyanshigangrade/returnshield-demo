@@ -5,6 +5,7 @@ export default function ReturnShieldDemo() {
   const [buyerImages, setBuyerImages] = useState([null, null, null]);
   const [result, setResult] = useState(null);
 
+<<<<<<< HEAD
   const handleImageChange = (e, index, side) => {
     const file = e.target.files[0];
     const imageUrl = file ? URL.createObjectURL(file) : null;
@@ -30,6 +31,30 @@ export default function ReturnShieldDemo() {
     if (!allSellerUploaded || !allBuyerUploaded) {
       alert("Please upload all 3 images from Seller and Buyer.");
       return;
+=======
+  const handleImageUpload = (e, index, isSeller) => {
+    const file = e.target.files[0];
+    const imageUrl = file ? URL.createObjectURL(file) : null;
+
+    if (isSeller) {
+      const newImages = [...sellerImages];
+      newImages[index] = imageUrl;
+      setSellerImages(newImages);
+    } else {
+      const newImages = [...buyerImages];
+      newImages[index] = imageUrl;
+      setBuyerImages(newImages);
+    }
+  };
+
+  const checkFraud = () => {
+    if (sellerImages.every(Boolean) && buyerImages.every(Boolean)) {
+      const match = Math.random() > 0.4;
+      const score = match ? Math.floor(Math.random() * 15 + 85) : Math.floor(Math.random() * 30 + 40);
+      setResult({ match, score });
+    } else {
+      alert("Please upload all 3 images for both Seller and Buyer.");
+>>>>>>> 43c9d7b8e6bc7e44fad77544e889b9fe8ed899aa
     }
 
     let isMatch = true;
@@ -52,6 +77,7 @@ export default function ReturnShieldDemo() {
       <p>Fraud Detection using Separate Image Inputs</p>
 
       <div className="card">
+<<<<<<< HEAD
         <h2>📦 Seller Image Uploads</h2>
         {[0, 1, 2].map(index => (
           <div key={index} style={{ marginBottom: '10px' }}>
@@ -63,11 +89,19 @@ export default function ReturnShieldDemo() {
             {sellerImages[index]?.url && (
               <img src={sellerImages[index].url} alt={`Seller ${index}`} width="100" />
             )}
+=======
+        <h2>📦 Seller Product Upload</h2>
+        {[0, 1, 2].map((i) => (
+          <div key={i}>
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, i, true)} />
+            {sellerImages[i] && <img src={sellerImages[i]} alt={`Seller ${i}`} width="100" />}
+>>>>>>> 43c9d7b8e6bc7e44fad77544e889b9fe8ed899aa
           </div>
         ))}
       </div>
 
       <div className="card">
+<<<<<<< HEAD
         <h2>🔁 Buyer Image Uploads</h2>
         {[0, 1, 2].map(index => (
           <div key={index} style={{ marginBottom: '10px' }}>
@@ -79,6 +113,13 @@ export default function ReturnShieldDemo() {
             {buyerImages[index]?.url && (
               <img src={buyerImages[index].url} alt={`Buyer ${index}`} width="100" />
             )}
+=======
+        <h2>🔁 Buyer Return Upload</h2>
+        {[0, 1, 2].map((i) => (
+          <div key={i}>
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, i, false)} />
+            {buyerImages[i] && <img src={buyerImages[i]} alt={`Buyer ${i}`} width="100" />}
+>>>>>>> 43c9d7b8e6bc7e44fad77544e889b9fe8ed899aa
           </div>
         ))}
       </div>
