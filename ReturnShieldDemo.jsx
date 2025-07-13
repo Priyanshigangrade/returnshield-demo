@@ -1,78 +1,71 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 
-function ReturnShieldDemo() {
-  const [sellerImages, setSellerImages] = useState([]);
+export default function ReturnShieldDemo() {
+  const [sellerImages, setSellerImages] = useState([null, null, null]);
+  const [buyerImages, setBuyerImages] = useState([null, null, null]);
+  const [result, setResult] = useState(null);
 
-  const handleSingleSellerImageUpload = (e, index) => {
+  const handleImageUpload = (e, index, isSeller) => {
     const file = e.target.files[0];
-    if (!file) return;
-    const updatedImages = [...sellerImages];
-    updatedImages[index] = file;
-    setSellerImages(updatedImages);
+    const imageUrl = file ? URL.createObjectURL(file) : null;
+
+    if (isSeller) {
+      const newImages = [...sellerImages];
+      newImages[index] = imageUrl;
+      setSellerImages(newImages);
+    } else {
+      const newImages = [...buyerImages];
+      newImages[index] = imageUrl;
+      setBuyerImages(newImages);
+    }
+  };
+
+  const checkFraud = () => {
+    if (sellerImages.every(Boolean) && buyerImages.every(Boolean)) {
+      const match = Math.random() > 0.4;
+      const score = match ? Math.floor(Math.random() * 15 + 85) : Math.floor(Math.random() * 30 + 40);
+      setResult({ match, score });
+    } else {
+      alert("Please upload all 3 images for both Seller and Buyer.");
+    }
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
-      <h2>Upload Seller Images (1-by-1)</h2>
+    <div className="container">
+      <h1>ReturnShield.AI Demo</h1>
+      <p className="subtitle">Fraud Return Detection using Image Comparison</p>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label>Image 1:</label><br />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleSingleSellerImageUpload(e, 0)}
-        />
+      <div className="card">
+        <h2>📦 Seller Product Upload</h2>
+        {[0, 1, 2].map((i) => (
+          <div key={i}>
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, i, true)} />
+            {sellerImages[i] && <img src={sellerImages[i]} alt={`Seller ${i}`} width="100" />}
+          </div>
+        ))}
       </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label>Image 2:</label><br />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleSingleSellerImageUpload(e, 1)}
-        />
+      <div className="card">
+        <h2>🔁 Buyer Return Upload</h2>
+        {[0, 1, 2].map((i) => (
+          <div key={i}>
+            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, i, false)} />
+            {buyerImages[i] && <img src={buyerImages[i]} alt={`Buyer ${i}`} width="100" />}
+          </div>
+        ))}
       </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label>Image 3:</label><br />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleSingleSellerImageUpload(e, 2)}
-        />
+      <div className="center">
+        <button onClick={checkFraud}>🔍 Check for Fraud</button>
       </div>
 
-      <h4>Uploaded Images Preview:</h4>
-      <div style={{ display: "flex", gap: "10px" }}>
-        {sellerImages.map((img, idx) =>
-          img ? (
-            <img
-              key={idx}
-              src={URL.createObjectURL(img)}
-              alt={`seller-${idx}`}
-              width="100"
-              height="100"
-            />
-          ) : (
-            <div
-              key={idx}
-              style={{
-                width: "100px",
-                height: "100px",
-                border: "1px dashed gray",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "gray",
-              }}
-            >
-              No Image
-            </div>
-          )
-        )}
-      </div>
+      {result && (
+        <div className="card">
+          <h2>🧠 AI Verdict</h2>
+          <p>Match Status: {result.match ? "✅ Match (Genuine Return)" : "❌ Mismatch (Possible Fraud)"}</p>
+          <p>Fraud Score: {result.score}%</p>
+        </div>
+      )}
     </div>
   );
 }
-
-export default ReturnShieldDemo;
